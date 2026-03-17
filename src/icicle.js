@@ -123,7 +123,8 @@ export default Kapsule({
           const scale = 1 / tr.k;
 
           state.canvas.selectAll('text')
-            .attr('transform', horiz ? `scale(1, ${scale})` : `scale(${scale},1)`);
+            .attr('transform', horiz ? `scale(1, ${scale})` : `scale(${scale},1)`)
+            .attr('transform-style', 'preserve-3d');
         }
 
         // Prevent using transitions when using mouse wheel to zoom
