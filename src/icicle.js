@@ -123,8 +123,7 @@ export default Kapsule({
           const scale = 1 / tr.k;
 
           state.canvas.selectAll('text')
-            .attr('transform', horiz ? `scale(1, ${scale})` : `scale(${scale},1)`)
-            .attr('transform-style', 'preserve-3d');
+            .attr('transform', horiz ? `scale(1, ${scale})` : `scale(${scale},1)`);
         }
 
         // Prevent using transitions when using mouse wheel to zoom
@@ -192,10 +191,11 @@ export default Kapsule({
 
     // Entering
     const newCell = cell.enter().append('g')
-      .attr('transform', d => `translate(
-        ${x0(d) + (x1(d) - x0(d)) * (horiz ? 0 : 0.5)},
-        ${y0(d) + (y1(d) - y0(d)) * (horiz ? 0.5 : 0)}
-      )`);
+      .attr('transform', d => {
+        const tx = x0(d) + (x1(d) - x0(d)) * (horiz ? 0 : 0.5);
+        const ty = y0(d) + (y1(d) - y0(d)) * (horiz ? 0.5 : 0);
+        return `translate(${Math.round(tx)},${Math.round(ty)})`;
+      });
 
     newCell.append('rect')
       .attr('id', d => `rect-${d.id}`)
@@ -256,7 +256,7 @@ export default Kapsule({
     ].filter(s => s).join(' '));
 
     allCells.transition(transition)
-      .attr('transform', d => `translate(${x0(d)},${y0(d)})`);
+      .attr('transform', d => `translate(${Math.round(x0(d))},${Math.round(y0(d))})`);
 
     allCells.select('rect').transition(transition)
       .attr('width', d => `${x1(d) - x0(d) - (horiz ? 1 : 0)}`)
@@ -266,10 +266,11 @@ export default Kapsule({
     allCells.select('g.label-container')
       .style('display', state.showLabels ? null : 'none')
       .transition(transition)
-        .attr('transform', d => `translate(
-          ${state.orientation === 'lr' ? 4 : state.orientation === 'rl' ? x1(d) - x0(d) - 4 : (x1(d) - x0(d)) / 2},
-          ${(y1(d) - y0(d)) / 2}
-        )`);
+        .attr('transform', d => {
+          const tx = state.orientation === 'lr' ? 4 : state.orientation === 'rl' ? x1(d) - x0(d) - 4 : (x1(d) - x0(d)) / 2;
+          const ty = (y1(d) - y0(d)) / 2;
+          return `translate(${Math.round(tx)},${Math.round(ty)})`;
+        });
 
     if (state.showLabels) {
       // Update previous scale
